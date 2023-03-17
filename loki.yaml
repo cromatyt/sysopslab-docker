@@ -1,0 +1,38 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  path_prefix: /loki
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: boltdb-shipper
+      object_store: s3
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/index_cache
+    cache_ttl: 24h
+    shared_store: s3
+
+  aws:
+    s3: http://Zj1qF0Icf7qz9ZS9:Ua2lXgnOnPIWUaozGvRS89gVa3eHEeUw@192.168.122.1:9000/loki
+    s3forcepathstyle: true
+
+ruler:
+  alertmanager_url: http://192.168.122.1:9093
+
+analytics:
+  reporting_enabled: false

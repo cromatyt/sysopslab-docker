@@ -1,0 +1,5 @@
+storage "s3" {
+  access_key = "9ms3IY62xAIgcPy5"
+  secret_key = "bWA7iMh9XcvH056SECgkM2LMTBy1f93A"
+  bucket     = "vault"
+}
