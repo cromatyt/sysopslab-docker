@@ -24,9 +24,35 @@
 [entryPoints]
   [entryPoints.web]
     address = ":80"
+    [entryPoints.web.transport]
+      [entryPoints.web.transport.respondingTimeouts]
+        readTimeout = 60
+        idleTimeout = 60
 
   [entryPoints.websecure]
     address = ":443"
+    [entryPoints.websecure.transport]
+      [entryPoints.websecure.transport.respondingTimeouts]
+        readTimeout = 60
+        idleTimeout = 60
+
+  [entryPoints.nginx]
+    address = ":8081"
+
+  [entryPoints.postgres]
+    address = ":5432"
+
+  #[entryPoints.minio-console]
+  #  address = ":9001"
+
+  #[entryPoints.minio]
+  #  address = ":9000"
+  
+  #[entryPoints.vranish]
+  #  address = ":6081"
+  
+  #[entryPoints.grafana]
+  #  address = ":3000"
 
 ################################################################
 # Traefik logs configuration
@@ -44,7 +70,7 @@
   # Optional
   # Default: "ERROR"
   #
-  # level = "DEBUG"
+  level = "DEBUG"
 
   # Sets the filepath for the traefik log. If not specified, stdout will be used.
   # Intermediate directories are created if necessary.
@@ -149,7 +175,7 @@
   # Optional
   # Default: true
   #
-  # exposedByDefault = false
+  exposedByDefault = false
 
 ################################################################
 # Metrics

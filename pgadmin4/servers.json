@@ -1,0 +1,32 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Docker",
+            "Group": "Server Test",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "postgres.docker.localhost",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "misc",
+            "Comment": "Default pgadmin example: https://www.pgadmin.org/docs/pgadmin4/latest/import_export_servers.html#json-format"
+        },
+        "2": {
+            "Name": "Keycloak",
+            "Group": "Server Test",
+            "Port": 5432,
+            "Username": "keycloak",
+            "Host": "postgres.docker.localhost",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "keycloak"
+        },
+        "3": {
+            "Name": "Gitea",
+            "Group": "Server Test",
+            "Port": 5432,
+            "Username": "gitea",
+            "Host": "postgres.docker.localhost",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "gitea"
+        }
+    }
+}

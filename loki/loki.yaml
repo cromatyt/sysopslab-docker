@@ -28,11 +28,11 @@ storage_config:
     shared_store: s3
 
   aws:
-    s3: http://Zj1qF0Icf7qz9ZS9:Ua2lXgnOnPIWUaozGvRS89gVa3eHEeUw@192.168.122.1:9000/loki
+    s3: http://Zj1qF0Icf7qz9ZS9:Ua2lXgnOnPIWUaozGvRS89gVa3eHEeUw@minio.docker.localhost/loki
     s3forcepathstyle: true
 
-ruler:
-  alertmanager_url: http://192.168.122.1:9093
+#ruler:
+#  alertmanager_url: http://HOTNAME:9093
 
 analytics:
   reporting_enabled: false
