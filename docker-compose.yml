@@ -28,6 +28,8 @@ services:
       - "--entrypoints.ldaps.address=:3894"
       - "--entrypoints.fluentbit.address=:24224"
       - "--entrypoints.opensearch.address=:9200"
+      - "--entrypoints.zabbixpassive.address=:10050"
+      - "--entrypoints.zabbixactive.address=:10051"
       # Enable insecure access
       - "--api.insecure=true"
       # Setup provider
@@ -43,6 +45,8 @@ services:
       - "3894:3894"
       - "24224:24224"
       - "9200:9200"
+      - "10050:10050"
+      - "10051:10051"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -644,6 +648,101 @@ services:
           - "redis.docker.localhost"
     depends_on:
       - traefik
+
+  zabbixsrv:
+    image: zabbix/zabbix-server-pgsql:ubuntu-6.4-latest
+    container_name: zabbixsrv
+    environment:
+      - DB_SERVER_HOST=postgres.docker.localhost
+      - DB_SERVER_PORT=5432
+      - DB_SERVER_SCHEMA=zabbix
+      - POSTGRES_USER=zabbix
+      - POSTGRES_PASSWORD=zabbix
+      #- POSTGRES_USER_FILE=/run/secrets/POSTGRES_USER
+      #- POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro 
+      #- ./zabbix/.postgres_user:/run/secrets/POSTGRES_USER:ro
+      #- ./zabbix/.postgres_pwd:/run/secrets/POSTGRES_PASSWORD:ro
+    labels:
+      - "traefik.enable=true"
+      # TCP zabbix agent passive
+      - "traefik.tcp.routers.zabbixpassive.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.zabbixpassive.entrypoints=zabbixpassive"
+      - "traefik.tcp.routers.zabbixpassive.service=zabbixpassive"
+      - "traefik.tcp.services.zabbixpassive.loadbalancer.server.port=10050"
+      # TCP zabbix agent active
+      - "traefik.tcp.routers.zabbixactive.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.zabbixactive.entrypoints=zabbixactive"
+      - "traefik.tcp.routers.zabbixactive.service=zabbixactive"
+      - "traefik.tcp.services.zabbixactive.loadbalancer.server.port=10051"
+      - "traefik.port=10050,10051"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+    networks:
+      traefik:
+        aliases:
+          - "zabbixsrv.docker.localhost"
+    depends_on:
+      - traefik
+      - postgres
+
+  zabbixweb:
+    image: zabbix/zabbix-web-nginx-pgsql:ubuntu-6.4-latest
+    container_name: zabbixweb
+    environment:
+      - DB_SERVER_HOST=postgres.docker.localhost
+      - DB_SERVER_PORT=5432
+      - DB_SERVER_SCHEMA=zabbix
+      - POSTGRES_USER=zabbix
+      - POSTGRES_PASSWORD=zabbix
+      - ZBX_SERVER_HOST=zabbixsrv.docker.localhost
+      #- POSTGRES_USER_FILE=/run/secrets/POSTGRES_USER
+      #- POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro 
+      #- ./zabbix/.postgres_user:/run/secrets/POSTGRES_USER:ro
+      #- ./zabbix/.postgres_pwd:/run/secrets/POSTGRES_PASSWORD:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.zabbixweb.rule=Host(`zabbixweb.docker.localhost`)"
+      - "traefik.http.routers.zabbixweb.entrypoints=web,websecure"
+      - "traefik.http.services.zabbixweb.loadbalancer.server.port=8080"
+      - "traefik.port=8080,8443"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '512M'
+    networks:
+      traefik:
+        aliases:
+          - "zabbixweb.docker.localhost"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://zabbixweb.docker.localhost:8080/ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 1
+      start_period: 5s
+    depends_on:
+      - traefik
+      - postgres
+      - zabbixsrv
 
 networks:
   webgateway:

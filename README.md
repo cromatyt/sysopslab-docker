@@ -22,16 +22,25 @@
 - [x] glauth
 - [x] opensearch
 - [x] opensearch dashboard
-- [ ] kafka ?
+- [ ] harbor
+- [x] zabbix (here with psql)
+- [x] kafka ?
 
 ---
 
+# How to start
+
+Run docker-compose file:
+
+`sudo docker-compose up -d"
+
+-d option for detach containers.
 # Configure git
 
 A git profile par folder ?
 Edit your `.gitconfig` file:
 
-```txt
+```yaml
 [core]
     editor = vim
 
@@ -47,7 +56,7 @@ Edit your `.gitconfig` file:
 
 Create your `.gitconfig-custom` file:
 
-```txt
+```yaml
 [core]
     sshCommand = "ssh -i path/to/custom/ssh/key"
 
@@ -88,6 +97,7 @@ Should display "PONG"
 # Glauth
 
 You can config glauth by editing glauth.conf
+
 With the defautl config file, check ldap acces by executing :
 
 `ldapsearch -x -LLL -H ldap://glauth.docker.localhost:3893 -b "dc=glauth,dc=com" -D "cn=serviceuser,dc=glauth,dc=com" -W`
@@ -97,3 +107,15 @@ With the defautl config file, check ldap acces by executing :
 Check if your deploy is ok:
 
 `curl -X GET --insecure -u 'admin:admin' https://opensearch.docker.localhost:9200`
+
+# Zabbix
+
+Default zabbix account/password:
+
+Admin/zabbix
+
+# End
+
+After `sudo docker-compose down`, clean unused docker volumes:
+
+`sudo docker volume prune`

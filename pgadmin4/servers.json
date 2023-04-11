@@ -27,6 +27,15 @@
             "Host": "postgres.docker.localhost",
             "SSLMode": "prefer",
             "MaintenanceDB": "gitea"
+        },
+        "4": {
+            "Name": "Zabbix",
+            "Group": "Server Test",
+            "Port": 5432,
+            "Username": "zabbix",
+            "Host": "postgres.docker.localhost",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "zabbix"
         }
     }
 }

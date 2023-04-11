@@ -23,3 +23,16 @@ CREATE DATABASE gitea
 
     \connect gitea;
     CREATE SCHEMA IF NOT EXISTS gitea AUTHORIZATION gitea;
+
+CREATE USER zabbix WITH PASSWORD 'zabbix' CREATEDB;
+CREATE DATABASE zabbix
+    WITH
+    OWNER = zabbix
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'fr_FR.utf8'
+    LC_CTYPE = 'fr_FR.utf8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+    \connect zabbix;
+    CREATE SCHEMA IF NOT EXISTS zabbix AUTHORIZATION zabbix;
