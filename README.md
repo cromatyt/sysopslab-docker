@@ -40,7 +40,7 @@ Run docker-compose file:
 # Configure git multi account
 
 A git profile par folder ?
-Edit your `.gitconfig` file:
+Edit your `.gitconfig` file (home directory):
 
 ```yaml
 [core]
@@ -56,7 +56,7 @@ Edit your `.gitconfig` file:
     path = /your/path/.gitconfig-custom
 ```
 
-Create your `.gitconfig-custom` file:
+Create your `.gitconfig-custom` file in your current directory (under your home dir):
 
 ```yaml
 [core]
@@ -82,7 +82,7 @@ Connect to gitea with an admin account
 
 - Website Administration => Applications
 
-URL Redict => http://drone.docker.localhost/login
+URL Redirect => http://drone.docker.localhost/login
 
 Copy CLIENT_ID and CLIENT_SECRET to docker compose drone section
 
@@ -90,7 +90,7 @@ You will be redirect to http://drone.docker.localhost/register, juste go to http
 
 Create a .dorne.yml file like:
 
-```txt
+```yaml
 kind: pipeline
 type: docker
 name: default
