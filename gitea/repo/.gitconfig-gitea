@@ -1,0 +1,6 @@
+[core]
+    sshCommand = "ssh -i ~/.ssh/id_ed25519"
+
+[user]
+    name = gitadmin
+    email = gitadmin@admin.com

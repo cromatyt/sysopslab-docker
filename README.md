@@ -15,16 +15,18 @@
 - [x] promtail
 - [x] fluent-bit
 - [ ] netdata # config
-- [ ] gitea # GUI ok, git clone ssh KO (stockage minio ?)
-- [ ] drone io # runner network
+- [x] gitea
+- [x] drone
+- [x] drone-runner
 - [ ] vault # config
 - [x] redis
 - [x] glauth
 - [x] opensearch
 - [x] opensearch dashboard
 - [ ] harbor
+- [ ] coredns or bind9
 - [x] zabbix (here with psql)
-- [x] kafka ?
+- [ ] kafka ?
 
 ---
 
@@ -32,10 +34,10 @@
 
 Run docker-compose file:
 
-`sudo docker-compose up -d"
+`sudo docker-compose up -d`
 
 -d option for detach containers.
-# Configure git
+# Configure git multi account
 
 A git profile par folder ?
 Edit your `.gitconfig` file:
@@ -65,12 +67,6 @@ Create your `.gitconfig-custom` file:
     email = custom@email.addr
 ```
 
-For checking:
-
-- Go to your gitdir path
-- execute `git init` your folder isn't a git repository
-- look at `git config -l` output
-
 # Gitea
 
 If you forgot to create admin user at gitea initialization, go to gitea container and create an admin gitea user:
@@ -85,6 +81,26 @@ Configure OAuth2:
 Connect to gitea with an admin account
 
 - Website Administration => Applications
+
+URL Redict => http://drone.docker.localhost/login
+
+Copy CLIENT_ID and CLIENT_SECRET to docker compose drone section
+
+You will be redirect to http://drone.docker.localhost/register, juste go to http://drone.docker.localhost/ instead
+
+Create a .dorne.yml file like:
+
+```txt
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: greeting
+  image: bash:5.1-alpine3.17
+  commands:
+  - echo "it's work"
+```
 
 # Redis
 
