@@ -23,10 +23,9 @@
 - [x] glauth
 - [x] opensearch
 - [x] opensearch dashboard
-- [ ] harbor
+- [ ] caddy ?
 - [ ] coredns or bind9
 - [x] zabbix (here with psql)
-- [ ] kafka ?
 
 ---
 

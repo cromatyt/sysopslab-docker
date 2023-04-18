@@ -30,6 +30,7 @@ services:
       - "--entrypoints.opensearch.address=:9200"
       - "--entrypoints.zabbixpassive.address=:10050"
       - "--entrypoints.zabbixactive.address=:10051"
+      - "--entrypoints.coredns.address=:1053"
       # Enable insecure access
       - "--api.insecure=true"
       # Setup provider
@@ -47,6 +48,7 @@ services:
       - "9200:9200"
       - "10050:10050"
       - "10051:10051"
+      - "1053:1053"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -439,9 +441,14 @@ services:
       - GITEA__service__DISABLE_REGISTRATION=true
       #- GITRE__repository__DISABLE_HTTP_GIT=true
       - GITEA__server__HTTP_PORT=80
-      #- GITEA__server__ROOT_URL=gitea.docker.localhost
-      #- GITEA_server_SSH_PORT=2222
-      #- GITEA_server_SSH_LISTEN_PORT=22
+      #- GITEA__storage__STORAGE_TYPE=minio
+      #- GITEA__storage__MINIO_ENDPOINT=minio.docker.localhost:9000
+      #- GITEA__storage__MINIO_ACCESS_KEY_ID=XXXXXXXXXXXX
+      #- GITEA__storage__MINIO_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXX
+      #- GITEA__storage__MINIO_BUCKET=gitea
+      #- GITEA__storage__MINIO_LOCATION=us-east-1
+      #- GITEA__storage__MINIO_USE_SSL=false
+      #- GITEA__storage__MINIO_INSECURE_SKIP_VERIFY=true
     volumes:
       - ./gitea/data:/data
       - ./gitea/app.ini:/data/gitea/conf/app.ini
@@ -747,6 +754,29 @@ services:
       - traefik
       - postgres
       - zabbixsrv
+
+  coredns:
+    image: coredns/coredns:1.10.1
+    container_name: coredns
+    command:
+      - "-dns.port=1053"
+    volumes:
+      - ./coredns/Corefile:/root/Corefile:ro
+      - ./coredns/plugin.cfg:/root/plugin.cfg:ro
+    labels:
+      - "traefik.enable=true"
+      # TCP
+      - "traefik.tcp.routers.coredns.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.coredns.entrypoints=coredns"
+      - "traefik.tcp.routers.coredns.service=coredns"
+      - "traefik.tcp.services.coredns.loadbalancer.server.port=1053"
+      - "traefik.port=1053"
+    networks:
+      traefik:
+        aliases:
+          - "coredns.docker.localhost"
+    depends_on:
+      - traefik
 
 networks:
   webgateway:
