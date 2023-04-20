@@ -256,7 +256,7 @@ services:
     environment:
       - VARNISH_SIZE=1G
     volumes:
-      - ./varnish/backend_director.vcl:/etc/varnish/default.vcl:ro
+      - ./varnish/default.vcl:/etc/varnish/default.vcl:ro
     # Mount memory
     tmpfs: /var/lib/varnish/varnishd:exec
     labels:
@@ -379,12 +379,20 @@ services:
       - apparmor:unconfined
     volumes:
       - ./netdata/netdata.conf:/etc/netdata/netdata.conf:ro
+      - ./netdata/nginx.conf:/etc/netdata/go.d/nginx.conf:ro
+      #- ./netdata/varnish.conf:/etc/netdata/python.d/varnish.conf:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.netdata.rule=Host(`netdata.docker.localhost`)"
       - "traefik.http.routers.netdata.entrypoints=web,websecure"
       - "traefik.http.services.netdata.loadbalancer.server.port=19999"
       - "traefik.port=19999"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://netdata.docker.localhost:19999/api/v1/info"]
+      interval: 10s
+      timeout: 3s
+      retries: 1
+      start_period: 5s
     networks:
       traefik:
         aliases:

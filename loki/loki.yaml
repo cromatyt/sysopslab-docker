@@ -28,7 +28,7 @@ storage_config:
     shared_store: s3
 
   aws:
-    s3: http://Zj1qF0Icf7qz9ZS9:Ua2lXgnOnPIWUaozGvRS89gVa3eHEeUw@minio.docker.localhost/loki
+    s3: http://XXXXXXXXXXXXXx:XXXXXXXXXXXXXXXX@minio.docker.localhost/loki
     s3forcepathstyle: true
 
 #ruler:

@@ -1,6 +1,6 @@
 <h1 style="text-align: center;">docker-compose testing environment</h1>
 
-## Todo
+# Todo
 
 - [x] traefik v2
 - [x] nginx
@@ -14,7 +14,7 @@
 - [ ] loki # s3 config
 - [x] promtail
 - [x] fluent-bit
-- [ ] netdata # config
+- [x] netdata
 - [x] gitea
 - [x] drone
 - [x] drone-runner
@@ -35,10 +35,35 @@ Run docker-compose file:
 
 `sudo docker-compose up -d`
 
--d option for detach containers.
+> -d option for detach containers.
+
+# Traefik
+
+:warning: Currently this project des't use tls access. :warning:
+
+URL access list :
+
+| URL |
+| :---: |
+| traefik.docker.localhost |
+| whoami.docker.localhost |
+| nginx.docker.localhost |
+| pgadmin.docker.localhost |
+| minioadmin.docker.localhost |
+| grafana.docker.localhost |
+| prometheus.docker.localhost |
+| netdata.docker.localhost |
+| keycloak.docker.localhost |
+| gitea.docker.localhost |
+| drone.docker.localhost |
+| opensearchdash.docker.localhost |
+| vault.docker.localhost |
+| zabbixweb.docker.localhost |
+
 # Configure git multi account
 
-A git profile par folder ?
+Do you want a git profile par folder ?
+
 Edit your `.gitconfig` file (home directory):
 
 ```yaml
@@ -55,7 +80,7 @@ Edit your `.gitconfig` file (home directory):
     path = /your/path/.gitconfig-custom
 ```
 
-Create your `.gitconfig-custom` file in your current directory (under your home dir):
+Create your `.gitconfig-custom` file in your project directory or parent folder ( but always under your home dir):
 
 ```yaml
 [core]
@@ -76,6 +101,8 @@ If you forgot to create admin user at gitea initialization, go to gitea containe
 
 # Drone io
 
+## Configuration with gitea
+
 Configure OAuth2:
 Connect to gitea with an admin account
 
@@ -83,11 +110,15 @@ Connect to gitea with an admin account
 
 URL Redirect => http://drone.docker.localhost/login
 
-Copy CLIENT_ID and CLIENT_SECRET to docker compose drone section
+Copy CLIENT_ID and CLIENT_SECRET to docker compose drone section then re execute :
 
-You will be redirect to http://drone.docker.localhost/register, juste go to http://drone.docker.localhost/ instead
+`sudo docker-compose up -d`
 
-Create a .dorne.yml file like:
+After accessing http://drone.docker.localhost/register, you will be redirect to http://drone.docker.localhost/register, just go to http://drone.docker.localhost/ instead.
+
+## Gitea CI example with drone
+
+Create a .dorne.yml file in your git project like:
 
 ```yaml
 kind: pipeline
@@ -131,6 +162,10 @@ Admin/zabbix
 
 # End
 
-After `sudo docker-compose down`, clean unused docker volumes:
+Remove your testing env :
+
+`sudo docker-compose down`
+
+Then clean unused docker volumes:
 
 `sudo docker volume prune`
